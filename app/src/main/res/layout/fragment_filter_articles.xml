@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/begin_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Begin date" />
+
+        <TextView
+            android:id="@+id/selected_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sort order" />
+
+        <Spinner
+            android:id="@+id/sort_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/time_options" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/categories_container"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/checkbox_national"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="National" />
+
+            <CheckBox
+                android:id="@+id/checkbox_politics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Politics" />
+
+            <CheckBox
+                android:id="@+id/checkbox_movies"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Movies" />
+
+            <CheckBox
+                android:id="@+id/checkbox_technology"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Technology" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_apply_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apply filter" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

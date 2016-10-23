@@ -15,7 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import static com.codepath.nytimessearch.R.id.ivImage;
+import static com.codepath.nytimessearch.R.id.iv_image;
 
 /**
  * Created by Alicia P on 21-Oct-16.
@@ -35,10 +35,10 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.item_article_result, parent, false);
         }
-        ImageView imageView = (ImageView) convertView.findViewById(ivImage);
+        ImageView imageView = (ImageView) convertView.findViewById(iv_image);
         imageView.setImageResource(0);
 
-        TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+        TextView tvTitle = (TextView) convertView.findViewById(R.id.tv_title);
         tvTitle.setText(article.getHeadline());
 
         String thumbnail = article.getThumbnail();

@@ -2,6 +2,7 @@ package com.codepath.nytimessearch.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import android.widget.GridView;
 
 import com.codepath.nytimessearch.R;
 import com.codepath.nytimessearch.adapters.ArticleArrayAdapter;
+import com.codepath.nytimessearch.fragments.FilterFragment;
 import com.codepath.nytimessearch.models.Article;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -46,9 +48,9 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void setupViews() {
-        etQuery = (EditText) findViewById(R.id.etQuery);
-        gvResults = (GridView) findViewById(R.id.gvResults);
-        btnSearch = (Button) findViewById(R.id.btnSearch);
+        etQuery = (EditText) findViewById(R.id.et_query);
+        gvResults = (GridView) findViewById(R.id.gv_results);
+        btnSearch = (Button) findViewById(R.id.btn_search);
 
         articles = new ArrayList<>();
         articleArrayAdapter = new ArticleArrayAdapter(this, articles);
@@ -80,10 +82,10 @@ public class SearchActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.filter:
-                //show dialog/activity with filtering options
+                showFilterDialog();
                 return true;
-            case R.id.action_settings:
-                return true;
+//            case R.id.action_settings:
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -121,5 +123,12 @@ public class SearchActivity extends AppCompatActivity {
                 }
         );
     }
+
+    private void showFilterDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        FilterFragment filterFragment = FilterFragment.newInstance("Edit filters");
+        filterFragment.show(fm, "FilterFragment");
+    }
+
 
 }

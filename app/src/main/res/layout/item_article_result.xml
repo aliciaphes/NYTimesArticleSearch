@@ -7,14 +7,14 @@
     <ImageView
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:id="@+id/ivImage"
+        android:id="@+id/iv_image"
         android:src="@mipmap/ic_launcher"
         android:scaleType="center"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTitle"
+        android:id="@+id/tv_title"
         android:ellipsize="end"
         android:maxLines="2"
         android:text="Text View"/>

@@ -18,8 +18,8 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/etQuery"
-        android:layout_alignBottom="@+id/btnSearch"
+        android:id="@+id/et_query"
+        android:layout_alignBottom="@+id/btn_search"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:hint="@string/hint" />
@@ -28,7 +28,7 @@
         android:text="@string/search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnSearch"
+        android:id="@+id/btn_search"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -37,10 +37,10 @@
     <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/etQuery"
+        android:layout_below="@+id/et_query"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="23dp"
-        android:id="@+id/gvResults"
+        android:id="@+id/gv_results"
         android:numColumns="4" />
 
 </RelativeLayout>

@@ -22,7 +22,7 @@ public class ArticleActivity extends AppCompatActivity {
 
         Article article = (Article) getIntent().getSerializableExtra("article");
 
-        WebView webView = (WebView) findViewById(R.id.wvArticle);
+        WebView webView = (WebView) findViewById(R.id.wv_article);
         webView.setWebViewClient(new WebViewClient(){
             @TargetApi(21)
             @Override
