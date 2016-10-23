@@ -13,10 +13,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 
+import com.codepath.nytimessearch.FilterSearchDialogListener;
 import com.codepath.nytimessearch.R;
 import com.codepath.nytimessearch.adapters.ArticleArrayAdapter;
 import com.codepath.nytimessearch.fragments.FilterFragment;
 import com.codepath.nytimessearch.models.Article;
+import com.codepath.nytimessearch.models.Query;
+import com.codepath.nytimessearch.util.Utilities;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -29,7 +32,7 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements FilterSearchDialogListener {
 
     EditText etQuery;
     GridView gvResults;
@@ -37,6 +40,11 @@ public class SearchActivity extends AppCompatActivity {
 
     ArrayList<Article> articles;
     ArticleArrayAdapter articleArrayAdapter;
+
+    RequestParams params;
+    AsyncHttpClient client = new AsyncHttpClient();
+    String url = Utilities.getSearchUrl();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,11 +102,11 @@ public class SearchActivity extends AppCompatActivity {
     public void onArticleSearch(View view) {
         String query = btnSearch.getText().toString();
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+        //AsyncHttpClient client = new AsyncHttpClient();
+        //url = Utilities.getSearchUrl();
 
-        RequestParams params = new RequestParams();
-        params.put("api-key", "f18fa33160fe414cac757019984c8b81");
+        params = new RequestParams();
+        params.put("api-key", Utilities.getApiKey());
         params.put("page", 0);
         params.put("q", query);
         client.get(url, params, new JsonHttpResponseHandler() {
@@ -111,7 +119,7 @@ public class SearchActivity extends AppCompatActivity {
                             articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
                             articles.addAll(Article.fromJSONArray(articleJsonResults));
                             articleArrayAdapter.notifyDataSetChanged();
-                        } catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -130,5 +138,53 @@ public class SearchActivity extends AppCompatActivity {
         filterFragment.show(fm, "FilterFragment");
     }
 
+
+    @Override
+    public void onFinishChoosingOptions(Query q) {
+        //url = q.buildQuery();
+        //https://api.nytimes.com/svc/search/v2/articlesearch.json?begin_date=20160112&sort=oldest&fq=news_desk:(%22education%22%20%22health%22)&api-key=xxxxxxxxxxxxxxxx
+        //extract values from query:
+        params = new RequestParams();
+        params.put("begin_date", q.getBeginDate());
+        params.put("sort", q.getSortOrder());
+        if (q.categoriesExist()) {
+            params.put("fq", "news_desk:" + q.buildCategories());
+        }
+        params.put("api-key", Utilities.getApiKey());
+
+        //todo: make call
+        makeCall(url, params);
+
+
+    }
+
+
+    public void makeCall(String url, RequestParams params) {
+
+        //todo: make sure url is well formed
+
+        client.get(url, params, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        super.onSuccess(statusCode, headers, response);
+                        JSONArray articleJsonResults = null;
+
+                        try {
+                            articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                            articles.clear();
+                            articles.addAll(Article.fromJSONArray(articleJsonResults));
+                            articleArrayAdapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    }
+                }
+        );
+    }
 
 }
