@@ -17,6 +17,7 @@ import com.codepath.nytimessearch.R;
 import com.codepath.nytimessearch.models.Query;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -166,15 +167,29 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        //GregorianCalendar dateRetrieved = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+        Calendar c = Calendar.getInstance();
 
-        //todo: check why the method returns the previous month
+        //int month = monthOfYear-1;
 
-        //todo: date must have 8 characters: String date=now.format("%d.%m.%Y"));
+        //REMEMBER Month value is 0-based. e.g., 0 for January.
+        c.set(Calendar.MONTH, monthOfYear);
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-        //populate the field with the date that was picked
-        String selectedDate = year + "/" + monthOfYear + "/" + dayOfMonth;
-        query.setBeginDate(Integer.toString(year) + Integer.toString(monthOfYear) + Integer.toString(dayOfMonth));
-        tvSelectedDate.setText(selectedDate);
+
+        //save as yyyymmdd in query as it needs to have 8 characters
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        query.setBeginDate(formatter.format(c.getTime()));
+
+        //format textview 'prettily' (hey, 'bigly' seems to exist) with the date that was picked
+        formatter = new SimpleDateFormat("dd MMMM yyyy");
+        tvSelectedDate.setText(formatter.format(c.getTime()));
+
+
+        //String selectedDate = year + "/" + monthOfYear + "/" + dayOfMonth;
+        //query.setBeginDate(Integer.toString(year) + Integer.toString(monthOfYear) + Integer.toString(dayOfMonth));
+        //tvSelectedDate.setText(selectedDate);
     }
 
 }
