@@ -9,7 +9,7 @@
         app:showAsAction="never" />-->
     <item
         android:id="@+id/filter"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_highlight_white_48dp"
         app:showAsAction="ifRoom|withText"
         android:title="Profile">
     </item>

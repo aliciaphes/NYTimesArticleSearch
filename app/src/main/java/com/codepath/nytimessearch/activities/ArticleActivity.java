@@ -21,7 +21,8 @@ public class ArticleActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Article article = (Article) getIntent().getSerializableExtra("article");
-        toolbar.setTitle(article.getHeadline());
+        getSupportActionBar().setTitle(article.getHeadline());
+
 
         WebView webView = (WebView) findViewById(R.id.wv_article);
         webView.setWebViewClient(new WebViewClient() {

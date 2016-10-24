@@ -1,4 +1,4 @@
-package com.codepath.nytimessearch;
+package com.codepath.nytimessearch.listeners;
 
 import com.codepath.nytimessearch.models.Query;
 

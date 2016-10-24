@@ -12,11 +12,13 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
-import com.codepath.nytimessearch.FilterSearchDialogListener;
 import com.codepath.nytimessearch.R;
 import com.codepath.nytimessearch.adapters.ArticleArrayAdapter;
 import com.codepath.nytimessearch.fragments.FilterFragment;
+import com.codepath.nytimessearch.listeners.EndlessScrollListener;
+import com.codepath.nytimessearch.listeners.FilterSearchDialogListener;
 import com.codepath.nytimessearch.models.Article;
 import com.codepath.nytimessearch.models.Query;
 import com.codepath.nytimessearch.util.Utilities;
@@ -34,6 +36,8 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity implements FilterSearchDialogListener {
 
+    //todo: the bar no se ve bien
+
     EditText etQuery;
     GridView gvResults;
     Button btnSearch;
@@ -42,6 +46,7 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
     ArticleArrayAdapter articleArrayAdapter;
 
     RequestParams params;
+    String query = "";
     AsyncHttpClient client = new AsyncHttpClient();
 
 
@@ -49,11 +54,11 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupViews();
     }
-
 
 
     public void setupViews() {
@@ -73,7 +78,31 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
                 startActivity(i);
             }
         });
+
+        gvResults.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                loadNextDataFromApi(page);
+                // or loadNextDataFromApi(totalItemsCount);
+                return true; // ONLY if more data is actually being loaded; false otherwise.
+            }
+        });
     }
+
+
+    // Append the next page of data into the adapter
+    // This method sends out a network request and appends new data items to your adapter.
+    public void loadNextDataFromApi(int offset) {
+        params = new RequestParams();
+        params.put("page", offset);
+        params.put("q", query);
+
+        //Send the request including an offset value (i.e `page`) as a query parameter to retrieve appropriate paginated data
+        retrieveArticles(params, false);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,6 +118,8 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //we will leave the switch statement even though there is only one option as of now
+        //for the future
         switch (id) {
             case R.id.filter:
                 showFilterDialog();
@@ -100,23 +131,26 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
         }
     }
 
+    //action performed when clicking on "search" button
     public void onArticleSearch(View view) {
-        String query = etQuery.getText().toString();
+        String tvContents = etQuery.getText().toString();
 
-        //AsyncHttpClient client = new AsyncHttpClient();
-        //url = Utilities.getSearchUrl();
+        if (query != tvContents) {//contents of the query have changed
 
-        params = new RequestParams();
-        params.put("api-key", Utilities.getApiKey());
-        params.put("page", 0);
-        params.put("q", query);
+            Utilities.hideSoftKeyboard(view, getBaseContext());//hide the soft keyboard to make more screen room
 
-        makeCall(params);
+            query = tvContents;//update value of the query
+            params = new RequestParams();
+            params.put("page", 0);
+            params.put("q", query);
+
+            retrieveArticles(params, true);
+        }
     }
 
     private void showFilterDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        FilterFragment filterFragment = FilterFragment.newInstance("Edit filters");
+        FilterFragment filterFragment = FilterFragment.newInstance("Filter results");
         filterFragment.show(fm, "FilterFragment");
     }
 
@@ -131,41 +165,52 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
         if (q.categoriesExist()) {
             params.put("fq", "news_desk:" + q.buildCategories());
         }
-        params.put("api-key", Utilities.getApiKey());
 
         //retrieve new list of articles according to parameters selected:
-        makeCall(params);
+        retrieveArticles(params, true);
     }
 
 
-    public void makeCall(RequestParams params) {
+    public void retrieveArticles(RequestParams params, final boolean clearArticleList) {
 
         String url = Utilities.getSearchUrl();
 
-        //todo: make sure url is well formed
+        //add API key
+        params.put("api-key", Utilities.getApiKey());
 
-        client.get(url, params, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        super.onSuccess(statusCode, headers, response);
-                        JSONArray articleJsonResults = null;
+        if (Utilities.isNetworkAvailable(this)) {
 
-                        try {
-                            articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                            articles.clear();
-                            articles.addAll(Article.fromJSONArray(articleJsonResults));
-                            articleArrayAdapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+            client.get(url, params, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            super.onSuccess(statusCode, headers, response);
+                            JSONArray articleJsonResults = null;
+
+                            try {
+                                articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                                if (clearArticleList) {
+                                    articles.clear();
+                                }
+                                articles.addAll(Article.fromJSONArray(articleJsonResults));
+                                articleArrayAdapter.notifyDataSetChanged();
+                                if(articles.isEmpty()){
+                                    Toast.makeText(getBaseContext(), "No articles retrieved, try refining your search", Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                            Toast.makeText(getBaseContext(), "Data could not be retrieved", Toast.LENGTH_SHORT).show();
                         }
                     }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        super.onFailure(statusCode, headers, throwable, errorResponse);
-                    }
-                }
-        );
+            );
+        } else {
+            Toast.makeText(this, "Network unavailable, please try again", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

@@ -6,25 +6,28 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.codepath.nytimessearch.FilterSearchDialogListener;
 import com.codepath.nytimessearch.R;
+import com.codepath.nytimessearch.listeners.FilterSearchDialogListener;
 import com.codepath.nytimessearch.models.Query;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+
+
 /**
  * Created by Alicia P on 22-Oct-16.
  */
 
-//public class FilterFragment extends DialogFragment {
+
 public class FilterFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
 
@@ -78,6 +81,7 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
 
     }
 
+    //todo: 'prettify' the filter dialog...
 
 
     private void setupElements() {
@@ -133,17 +137,19 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
     }
 
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//
-//        super.onCreate(savedInstanceState);
-//        //getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
-//        //android.R.style.Theme_Black_NoTitleBar_Fullscreen
-//
-//    }
 
 
+    @Override
+    public void onResume() {
+        // Get existing layout params for the window
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        // Assign window properties to fill the parent
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.height = WindowManager.LayoutParams.MATCH_PARENT;
+        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+        // Call super onResume after sizing
+        super.onResume();
+    }
 
 
     @Override
