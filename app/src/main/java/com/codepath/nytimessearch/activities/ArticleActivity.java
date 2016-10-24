@@ -42,8 +42,10 @@ public class ArticleActivity extends AppCompatActivity {
         });
         webView.loadUrl(article.getArticleUrl());
 
+        //enable the app icon as an Up button (manifest indicates who the parent is):
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //todo: what does setDisplayHomeAsUpEnabled do again??
+        //todo: check 'hints' section
     }
 
 }

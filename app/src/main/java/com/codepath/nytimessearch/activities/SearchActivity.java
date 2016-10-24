@@ -3,14 +3,14 @@ package com.codepath.nytimessearch.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -36,11 +36,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity implements FilterSearchDialogListener {
 
-    //todo: the bar no se ve bien
+    //todo: move strings to strings.xml
 
-    EditText etQuery;
+    //EditText etQuery;
     GridView gvResults;
-    Button btnSearch;
+    //Button btnSearch;
 
     ArrayList<Article> articles;
     ArticleArrayAdapter articleArrayAdapter;
@@ -58,13 +58,14 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupViews();
+
     }
 
 
     public void setupViews() {
-        etQuery = (EditText) findViewById(R.id.et_query);
+        //etQuery = (EditText) findViewById(R.id.et_query);
         gvResults = (GridView) findViewById(R.id.gv_results);
-        btnSearch = (Button) findViewById(R.id.btn_search);
+        //btnSearch = (Button) findViewById(R.id.btn_search);
 
         articles = new ArrayList<>();
         articleArrayAdapter = new ArticleArrayAdapter(this, articles);
@@ -89,6 +90,16 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
                 return true; // ONLY if more data is actually being loaded; false otherwise.
             }
         });
+
+//        btnSearch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String tvContents = etQuery.getText().toString();
+//                //hide the soft keyboard to make more screen room
+//                Utilities.hideSoftKeyboard(view, getBaseContext());
+//                onArticleSearch(tvContents);
+//            }
+//        });
     }
 
 
@@ -108,7 +119,31 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        return true;
+        setupSearchLogic(menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void setupSearchLogic(Menu menu) {
+        MenuItem searchItem = menu.findItem(R.id.search_bar);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                onArticleSearch(query);
+
+                // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
+                // see https://code.google.com/p/android/issues/detail?id=24599
+                searchView.clearFocus();
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -132,12 +167,12 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
     }
 
     //action performed when clicking on "search" button
-    public void onArticleSearch(View view) {
-        String tvContents = etQuery.getText().toString();
+    public void onArticleSearch(String tvContents) {
+
 
         if (query != tvContents) {//contents of the query have changed
 
-            Utilities.hideSoftKeyboard(view, getBaseContext());//hide the soft keyboard to make more screen room
+
 
             query = tvContents;//update value of the query
             params = new RequestParams();

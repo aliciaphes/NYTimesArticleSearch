@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codepath.nytimessearch.R;
 import com.codepath.nytimessearch.listeners.FilterSearchDialogListener;
@@ -20,7 +21,6 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
 
 
 /**
@@ -39,17 +39,17 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
     Spinner tvSelectedOrder;
     //faltan las checkboxes
 
-    Button btnCreateFilter;
+    Button btnApplyFilter;
 
     Query query = new Query();
 
 
-    public FilterFragment(){
+    public FilterFragment() {
         //empty constructor is required
     }
 
 
-    public void createCalendar(){
+    public void createCalendar() {
         Calendar now = Calendar.getInstance();
 
         //datePicker = DatePickerDialog.newInstance((DatePickerDialog.OnDateSetListener) getActivity(),
@@ -83,60 +83,63 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
 
     //todo: 'prettify' the filter dialog...
 
+    //todo: give dialog a bar
+
 
     private void setupElements() {
-        tvSelectedDate  = (TextView) filterFragmentView.findViewById(R.id.selected_date);
+        tvSelectedDate = (TextView) filterFragmentView.findViewById(R.id.selected_date);
         tvSelectedOrder = (Spinner) filterFragmentView.findViewById(R.id.sort_spinner);
 
-        btnCreateFilter = (Button) filterFragmentView.findViewById(R.id.btn_apply_filter);
+        btnApplyFilter = (Button) filterFragmentView.findViewById(R.id.btn_apply_filter);
     }
-
 
 
     private void setButtonListener() {
 
         //btnCreateFilter.setOnEditorActionListener(this);
 
-        btnCreateFilter.setOnClickListener(new View.OnClickListener() {
+        btnApplyFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                //todo: make sure no fields are blank
+                //make sure date is not blank
+                if (query.getBeginDate().isEmpty()) {
+                    Toast.makeText(getActivity(), "Please select a valid date", Toast.LENGTH_SHORT).show();
+                } else {
 
-                getSelectedValues();
+                    getSelectedValues();
 
-                dismiss();
+                    dismiss();
 
-                //pass values to the parent
-                FilterSearchDialogListener listener = (FilterSearchDialogListener) getActivity();
-                listener.onFinishChoosingOptions(query);
+                    //pass values to the parent
+                    FilterSearchDialogListener listener = (FilterSearchDialogListener) getActivity();
+                    listener.onFinishChoosingOptions(query);
+                }
 
             }
         });
     }
 
     private void getSelectedValues() {
+        //retrieve order that was selected
         String selectedOrder = tvSelectedOrder.getSelectedItem().toString();
         query.setSortOrder(selectedOrder);
 
-        //retrieve checkboxes that are checked
+        //retrieve checkboxes that were checked
         LinearLayout llCategories = (LinearLayout) filterFragmentView.findViewById(R.id.categories_container);
         int count = llCategories.getChildCount();
 
-        for(int i=0; i<count; i++) {
+        for (int i = 0; i < count; i++) {
             CheckBox cbChild = (CheckBox) llCategories.getChildAt(i);
-            if(cbChild.isChecked()){
+            if (cbChild.isChecked()) {
                 String id = cbChild.getResources().getResourceEntryName(cbChild.getId());
                 //all checkboxes id's are 'checkbox_[category]' so we subtract the category
-                int index = id.indexOf('_')+1;
+                int index = id.indexOf('_') + 1;
                 String category = id.substring(index);
-                //Toast.makeText(getActivity(), category, Toast.LENGTH_SHORT).show();
                 query.addCategory("\"" + category + "\"");
             }
         }
     }
-
-
 
 
     @Override
