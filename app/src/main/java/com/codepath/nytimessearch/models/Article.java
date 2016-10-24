@@ -23,10 +23,10 @@ public class Article implements Serializable{
             headline = jsonObject.getJSONObject("headline").getString("main");
             thumbnail = "";
 
-            JSONArray multimedia = jsonObject.getJSONArray("media");
+            JSONArray multimedia = jsonObject.getJSONArray("multimedia");
             if(multimedia.length() > 1){
                 JSONObject multimediaJson = multimedia.getJSONObject(0);
-                thumbnail = "http://www.nytimes.com" + multimediaJson.getString("url");
+                thumbnail = "http://www.nytimes.com/" + multimediaJson.getString("url");
             }
         } catch (JSONException e) {
             e.printStackTrace();

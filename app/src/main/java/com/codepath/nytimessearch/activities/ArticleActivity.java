@@ -21,9 +21,10 @@ public class ArticleActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Article article = (Article) getIntent().getSerializableExtra("article");
+        toolbar.setTitle(article.getHeadline());
 
         WebView webView = (WebView) findViewById(R.id.wv_article);
-        webView.setWebViewClient(new WebViewClient(){
+        webView.setWebViewClient(new WebViewClient() {
             @TargetApi(21)
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -40,6 +41,8 @@ public class ArticleActivity extends AppCompatActivity {
         });
         webView.loadUrl(article.getArticleUrl());
 
+
+        //todo: what does setDisplayHomeAsUpEnabled do again??
     }
 
 }
