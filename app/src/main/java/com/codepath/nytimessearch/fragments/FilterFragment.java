@@ -77,14 +77,15 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //filterFragmentView = inflater.inflate(R.layout.fragment_filter_fields, container);
-        filterFragmentView = inflater.inflate(R.layout.fragment_filter_layout, container);
-        return filterFragmentView;
 
+        //filterFragmentView = inflater.inflate(R.layout.fragment_filter_fields, container);
+        //filterFragmentView = inflater.inflate(R.layout.fragment_filter_layout, container);
+        filterFragmentView = inflater.inflate(R.layout.fragment_filter_layout, container, false);
+
+        return filterFragmentView;
     }
 
 
@@ -201,8 +202,15 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
         tvSelectedDate.setText(formatter.format(c.getTime()));
     }
 
-    public ProgressDialog returnDialog(){
+    public ProgressDialog returnDialog() {
         return pd;
+    }
+
+
+    // Fires when a configuration change occurs and fragment needs to save state
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
 }

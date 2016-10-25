@@ -50,6 +50,8 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 
     EndlessScrollListener endlessScrollListener;
 
+    private final String FRAGMENT_TAG = "filterfragmenttag";
+    FragmentManager fm;
     FilterFragment filterFragment;
 
 
@@ -62,7 +64,7 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
         setSupportActionBar(toolbar);
         toolbar.setTitle("Find NY Times articles");
         setupViews();
-
+        setupFragment(savedInstanceState);
     }
 
 
@@ -95,6 +97,20 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
         };
 
         gvResults.setOnScrollListener(endlessScrollListener);
+    }
+
+
+    public void setupFragment(Bundle savedInstanceState) {
+
+        fm = getSupportFragmentManager();
+
+        if (savedInstanceState != null) { // saved instance state, fragment may exist
+            // look up the instance that already exists by tag
+            filterFragment = (FilterFragment) fm.findFragmentByTag(FRAGMENT_TAG);
+        } else if (filterFragment == null) {
+            // only create fragment if it hasn't been instantiated already
+            filterFragment = FilterFragment.newInstance("Filter search");
+        }
     }
 
 
@@ -183,9 +199,39 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
     }
 
     private void showFilterDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        filterFragment = FilterFragment.newInstance("Filter search");
-        filterFragment.show(fm, "FilterSearch");
+
+//        FragmentManager fm = getSupportFragmentManager();
+//        filterFragment = FilterFragment.newInstance("Filter search");
+
+//        filterFragment.show(fm, "FilterSearch");
+
+        // Adds a tag to a fragment and shows it
+//        if (!filterFragment.isInLayout()) {
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(filterFragment, FRAGMENT_TAG)
+//                    .commit();
+//        }
+        if (filterFragment != null) { // fragment exists
+            // look up the instance that already exists by tag
+            //filterFragment = (FilterFragment) fm.findFragmentByTag(FRAGMENT_TAG);
+            filterFragment.show(fm, "FilterSearch");
+        }
+        else{
+//            //filterFragment = FilterFragment.newInstance("Filter search");
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(filterFragment, FRAGMENT_TAG)
+                    .commit();
+        }
+
+
+
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .replace(R.id.fragment_container, filterFragment, FRAGMENT_TAG)
+//                    .commit();
+
     }
 
 
@@ -213,8 +259,6 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
             articles.clear();
             articleArrayAdapter.notifyDataSetChanged();
         }
-
-        //endlessScrollListener.resetState();
 
         //add API key
         params.put("api-key", Utilities.getApiKey());
