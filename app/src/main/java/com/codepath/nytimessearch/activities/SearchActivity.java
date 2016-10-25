@@ -48,6 +48,8 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
     String query = "";
     AsyncHttpClient client = new AsyncHttpClient();
 
+    EndlessScrollListener endlessScrollListener;
+
     FilterFragment filterFragment;
 
 
@@ -81,7 +83,7 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
             startActivity(i);
         });
 
-        gvResults.setOnScrollListener(new EndlessScrollListener() {
+        endlessScrollListener = new EndlessScrollListener() {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
                 // Triggered only when new data needs to be appended to the list
@@ -90,7 +92,9 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
                 // or loadNextDataFromApi(totalItemsCount);
                 return true; // ONLY if more data is actually being loaded; false otherwise.
             }
-        });
+        };
+
+        gvResults.setOnScrollListener(endlessScrollListener);
     }
 
 
@@ -99,7 +103,9 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
     public void loadNextDataFromApi(int offset) {
         params = new RequestParams();
         params.put("page", offset);
-        params.put("q", query);
+        if (!query.equals("")) {//query might be empty if we're searching using the dialog
+            params.put("q", query);
+        }
 
         //Send the request including an offset value (i.e `page`) as a query parameter to retrieve appropriate paginated data
         retrieveArticles(params, false);
@@ -165,6 +171,8 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 
             query = tvContents;//update value of the query
 
+            endlessScrollListener.resetState();//reset when a new search
+
             params = new RequestParams();
             params.put("page", 0);
             //params.put("sort", "newest");//let's retrieve the latest articles, we want to stay on top of things
@@ -197,9 +205,16 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
     }
 
 
-    public void retrieveArticles(RequestParams params, final boolean clearArticleList) {
+    public void retrieveArticles(RequestParams params, boolean clearArticleList) {
 
         String url = Utilities.getSearchUrl();
+
+        if (clearArticleList) {
+            articles.clear();
+            articleArrayAdapter.notifyDataSetChanged();
+        }
+
+        //endlessScrollListener.resetState();
 
         //add API key
         params.put("api-key", Utilities.getApiKey());
@@ -214,14 +229,11 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 
                             try {
                                 articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                                if (clearArticleList) {
-                                    articles.clear();
-                                }
                                 articles.addAll(Article.fromJSONArray(articleJsonResults));
                                 articleArrayAdapter.notifyDataSetChanged();
                                 //ProgressDialog pd = filterFragment.returnDialog();
                                 //if(pd.isShowing()){pd.dismiss();}
-                                if(articles.isEmpty()){
+                                if (articles.isEmpty()) {
                                     Toast.makeText(getBaseContext(), "No articles retrieved, try refining your search", Toast.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
