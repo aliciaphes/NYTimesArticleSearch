@@ -3,6 +3,7 @@ package com.codepath.nytimessearch.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,9 +38,10 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
 
     TextView tvSelectedDate;
     Spinner tvSelectedOrder;
-    //faltan las checkboxes
+    LinearLayout llCategories;
 
     Button btnApplyFilter;
+    Button btnCancel;
 
     Query query = new Query();
 
@@ -72,18 +74,15 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
     }
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        filterFragmentView = inflater.inflate(R.layout.fragment_filter_articles, container);
+        //filterFragmentView = inflater.inflate(R.layout.fragment_filter_fields, container);
+        filterFragmentView = inflater.inflate(R.layout.fragment_filter_layout, container);
         return filterFragmentView;
 
     }
-
-    //todo: 'prettify' the filter dialog...
-
-    //todo: give dialog a bar
 
 
     private void setupElements() {
@@ -91,33 +90,34 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
         tvSelectedOrder = (Spinner) filterFragmentView.findViewById(R.id.sort_spinner);
 
         btnApplyFilter = (Button) filterFragmentView.findViewById(R.id.btn_apply_filter);
+        btnCancel = (Button) filterFragmentView.findViewById(R.id.btn_cancel);
+        llCategories = (LinearLayout) filterFragmentView.findViewById(R.id.categories_container);
     }
 
 
-    private void setButtonListener() {
+    private void setButtonsListeners() {
 
         //btnCreateFilter.setOnEditorActionListener(this);
 
-        btnApplyFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnApplyFilter.setOnClickListener(v -> {
 
-                //make sure date is not blank
-                if (query.getBeginDate().isEmpty()) {
-                    Toast.makeText(getActivity(), "Please select a valid date", Toast.LENGTH_SHORT).show();
-                } else {
+            //make sure date is not blank
+            if (query.getBeginDate().isEmpty()) {
+                Toast.makeText(getActivity(), "Please select a valid date", Toast.LENGTH_SHORT).show();
+            } else {
 
-                    getSelectedValues();
+                getSelectedValues();
 
-                    dismiss();
+                dismiss();
 
-                    //pass values to the parent
-                    FilterSearchDialogListener listener = (FilterSearchDialogListener) getActivity();
-                    listener.onFinishChoosingOptions(query);
-                }
-
+                //pass values to the parent
+                FilterSearchDialogListener listener = (FilterSearchDialogListener) getActivity();
+                listener.onFinishChoosingOptions(query);
             }
+
         });
+
+        btnCancel.setOnClickListener(v -> dismiss());
     }
 
     private void getSelectedValues() {
@@ -126,7 +126,6 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
         query.setSortOrder(selectedOrder);
 
         //retrieve checkboxes that were checked
-        LinearLayout llCategories = (LinearLayout) filterFragmentView.findViewById(R.id.categories_container);
         int count = llCategories.getChildCount();
 
         for (int i = 0; i < count; i++) {
@@ -159,18 +158,22 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        String title = getArguments().getString("title");
+
+        getDialog().setTitle(title);//todo: does not work and I don't know why
+        //this.setStyle(DialogFragment.STYLE_NORMAL, R.style.FilterFragmentTheme);
+
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar.setTitle(title);
+
         createCalendar();
 
         setupElements();
 
-        setButtonListener();
+        setButtonsListeners();
 
-        tvSelectedDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePicker.show(getActivity().getFragmentManager(), "Datepickerdialog");
-            }
-        });
+        tvSelectedDate.setOnClickListener(v -> datePicker.show(getActivity().getFragmentManager(), "Datepickerdialog"));
+
     }
 
 

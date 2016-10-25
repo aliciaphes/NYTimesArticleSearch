@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activities.SearchActivity"
-            android:label="Find NY Times articles"
+            android:label="NY Times Search"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,8 +24,9 @@
         <activity
             android:name=".activities.ArticleActivity"
             android:label="@string/title_activity_article"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName="com.codepath.nytimessearch.activities.SearchActivity"></activity>
+            android:parentActivityName=".activities.SearchActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.ArticleChromeActivity"></activity>
     </application>
 
 </manifest>

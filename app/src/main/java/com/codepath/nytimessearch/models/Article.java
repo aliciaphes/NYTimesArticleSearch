@@ -3,28 +3,34 @@ package com.codepath.nytimessearch.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Alicia P on 21-Oct-16.
  */
 
-public class Article implements Serializable{
+@Parcel
+public class Article {
 
     String articleUrl;
     String headline;
     String thumbnail;
 
-    public Article(JSONObject jsonObject){
+    public Article() {
+        //needed for Parcelable
+    }
+
+
+    public Article(JSONObject jsonObject) {
         try {
             articleUrl = jsonObject.getString("web_url");
             headline = jsonObject.getJSONObject("headline").getString("main");
             thumbnail = "";
 
             JSONArray multimedia = jsonObject.getJSONArray("multimedia");
-            if(multimedia.length() > 1){
+            if (multimedia.length() > 1) {
                 JSONObject multimediaJson = multimedia.getJSONObject(0);
                 thumbnail = "http://www.nytimes.com/" + multimediaJson.getString("url");
             }
@@ -45,10 +51,10 @@ public class Article implements Serializable{
         return articleUrl;
     }
 
-    public static ArrayList<Article> fromJSONArray(JSONArray array){
+    public static ArrayList<Article> fromJSONArray(JSONArray array) {
         ArrayList<Article> results = new ArrayList<>();
 
-        for(int i=0; i<array.length(); i++){
+        for (int i = 0; i < array.length(); i++) {
             try {
                 results.add(new Article(array.getJSONObject(i)));
             } catch (JSONException e) {

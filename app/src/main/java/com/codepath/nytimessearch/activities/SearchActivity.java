@@ -9,8 +9,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -29,6 +27,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -37,6 +36,14 @@ import cz.msebera.android.httpclient.Header;
 public class SearchActivity extends AppCompatActivity implements FilterSearchDialogListener {
 
     //todo: move strings to strings.xml
+
+    //todo: create 'loading' articles dialog IN UTILITIES.JAVA:
+//    ProgressDialog pd = new ProgressDialog(context);
+//    pd.setTitle("Loading...");
+//    pd.setMessage("Please wait.");
+//    pd.setCancelable(false);
+//    pd.show();
+//    pd.dismiss();
 
     //EditText etQuery;
     GridView gvResults;
@@ -57,6 +64,7 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("Find NY Times articles");
         setupViews();
 
     }
@@ -70,14 +78,13 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
         articles = new ArrayList<>();
         articleArrayAdapter = new ArticleArrayAdapter(this, articles);
         gvResults.setAdapter(articleArrayAdapter);
-        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
-                Article article = articles.get(position);
-                i.putExtra("article", article);
-                startActivity(i);
-            }
+        gvResults.setOnItemClickListener((parent, view, position, id) -> {
+            //Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
+            Intent i = new Intent(getApplicationContext(), ArticleChromeActivity.class);
+
+            Article article = articles.get(position);
+            i.putExtra("article", Parcels.wrap(article));
+            startActivity(i);
         });
 
         gvResults.setOnScrollListener(new EndlessScrollListener() {
@@ -90,16 +97,6 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
                 return true; // ONLY if more data is actually being loaded; false otherwise.
             }
         });
-
-//        btnSearch.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String tvContents = etQuery.getText().toString();
-//                //hide the soft keyboard to make more screen room
-//                Utilities.hideSoftKeyboard(view, getBaseContext());
-//                onArticleSearch(tvContents);
-//            }
-//        });
     }
 
 
@@ -140,6 +137,7 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                //do nothing
                 return false;
             }
         });
@@ -169,14 +167,13 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
     //action performed when clicking on "search" button
     public void onArticleSearch(String tvContents) {
 
-
         if (query != tvContents) {//contents of the query have changed
 
-
-
             query = tvContents;//update value of the query
+
             params = new RequestParams();
             params.put("page", 0);
+            params.put("sort", "newest");//let's retrieve the latest articles, we want to stay on top of things
             params.put("q", query);
 
             retrieveArticles(params, true);
@@ -185,8 +182,8 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 
     private void showFilterDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        FilterFragment filterFragment = FilterFragment.newInstance("Filter results");
-        filterFragment.show(fm, "FilterFragment");
+        FilterFragment filterFragment = FilterFragment.newInstance("Filter search");
+        filterFragment.show(fm, "FilterSearch");
     }
 
 
@@ -239,7 +236,8 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             super.onFailure(statusCode, headers, throwable, errorResponse);
-                            Toast.makeText(getBaseContext(), "Data could not be retrieved", Toast.LENGTH_SHORT).show();
+                            //todo: make sure images are being retrieved
+                            //Toast.makeText(getBaseContext(), "Data could not be retrieved", Toast.LENGTH_SHORT).show();
                         }
                     }
             );

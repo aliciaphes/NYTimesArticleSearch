@@ -9,23 +9,25 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp">
 
         <TextView
             android:id="@+id/begin_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Begin date" />
+            android:text="Begin date"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@+id/selected_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Date" />
+            android:text="Click here to pick a date"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>
 
@@ -35,15 +37,16 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="20dp">
 
         <TextView
             android:id="@+id/sort_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Sort order" />
+            android:text="Sort order"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Spinner
             android:id="@+id/sort_spinner"
@@ -59,14 +62,15 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Category" />
+            android:text="Category"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
 
         <LinearLayout
@@ -102,7 +106,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
 
 
     <!--Button-->

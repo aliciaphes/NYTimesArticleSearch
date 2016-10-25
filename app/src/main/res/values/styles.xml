@@ -23,4 +23,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="FilterFragmentTheme" parent="Theme.AppCompat.Light.Dialog">
+        <!--<item name="android:windowTitleStyle">@style/DialogWindowTitle</item>-->
+        <item name="android:windowNoTitle">false</item>
+    </style>
 </resources>

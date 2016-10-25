@@ -2,9 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_share"
         app:showAsAction="always"
-        android:icon="@mipmap/ic_share_white_48dp"
-        android:orderInCategory="100"
+        android:icon="@drawable/ic_share_white_48dp"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         android:title="Share" />
+
+    <item
+        android:id="@+id/action_dummy"
+        app:showAsAction="always"
+        android:icon="@mipmap/ic_launcher"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        android:title="Dummy" />
 </menu>
