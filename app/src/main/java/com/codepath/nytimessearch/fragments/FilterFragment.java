@@ -1,6 +1,7 @@
 package com.codepath.nytimessearch.fragments;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
@@ -42,6 +43,8 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
 
     Button btnApplyFilter;
     Button btnCancel;
+
+    ProgressDialog pd;
 
     Query query = new Query();
 
@@ -97,14 +100,14 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
 
     private void setButtonsListeners() {
 
-        //btnCreateFilter.setOnEditorActionListener(this);
-
         btnApplyFilter.setOnClickListener(v -> {
 
             //make sure date is not blank
             if (query.getBeginDate().isEmpty()) {
                 Toast.makeText(getActivity(), "Please select a valid date", Toast.LENGTH_SHORT).show();
             } else {
+                //pd = Utilities.createLoadingDialog(getContext());
+                //pd.show();
 
                 getSelectedValues();
 
@@ -161,7 +164,6 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
         String title = getArguments().getString("title");
 
         getDialog().setTitle(title);//todo: does not work and I don't know why
-        //this.setStyle(DialogFragment.STYLE_NORMAL, R.style.FilterFragmentTheme);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(title);
@@ -197,11 +199,10 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
         //format textview 'prettily' (hey, 'bigly' seems to exist) with the date that was picked
         formatter = new SimpleDateFormat("dd MMMM yyyy");
         tvSelectedDate.setText(formatter.format(c.getTime()));
+    }
 
-
-        //String selectedDate = year + "/" + monthOfYear + "/" + dayOfMonth;
-        //query.setBeginDate(Integer.toString(year) + Integer.toString(monthOfYear) + Integer.toString(dayOfMonth));
-        //tvSelectedDate.setText(selectedDate);
+    public ProgressDialog returnDialog(){
+        return pd;
     }
 
 }

@@ -37,14 +37,6 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 
     //todo: move strings to strings.xml
 
-    //todo: create 'loading' articles dialog IN UTILITIES.JAVA:
-//    ProgressDialog pd = new ProgressDialog(context);
-//    pd.setTitle("Loading...");
-//    pd.setMessage("Please wait.");
-//    pd.setCancelable(false);
-//    pd.show();
-//    pd.dismiss();
-
     //EditText etQuery;
     GridView gvResults;
     //Button btnSearch;
@@ -55,6 +47,8 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
     RequestParams params;
     String query = "";
     AsyncHttpClient client = new AsyncHttpClient();
+
+    FilterFragment filterFragment;
 
 
     @Override
@@ -173,7 +167,7 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 
             params = new RequestParams();
             params.put("page", 0);
-            params.put("sort", "newest");//let's retrieve the latest articles, we want to stay on top of things
+            //params.put("sort", "newest");//let's retrieve the latest articles, we want to stay on top of things
             params.put("q", query);
 
             retrieveArticles(params, true);
@@ -182,7 +176,7 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 
     private void showFilterDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        FilterFragment filterFragment = FilterFragment.newInstance("Filter search");
+        filterFragment = FilterFragment.newInstance("Filter search");
         filterFragment.show(fm, "FilterSearch");
     }
 
@@ -225,6 +219,8 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
                                 }
                                 articles.addAll(Article.fromJSONArray(articleJsonResults));
                                 articleArrayAdapter.notifyDataSetChanged();
+                                //ProgressDialog pd = filterFragment.returnDialog();
+                                //if(pd.isShowing()){pd.dismiss();}
                                 if(articles.isEmpty()){
                                     Toast.makeText(getBaseContext(), "No articles retrieved, try refining your search", Toast.LENGTH_SHORT).show();
                                 }
