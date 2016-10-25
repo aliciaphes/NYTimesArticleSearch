@@ -49,6 +49,9 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
     Query query = new Query();
 
 
+    //todo: make dialog persistent from search to search
+
+
     public FilterFragment() {
         //empty constructor is required
     }

@@ -110,6 +110,9 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
         } else if (filterFragment == null) {
             // only create fragment if it hasn't been instantiated already
             filterFragment = FilterFragment.newInstance("Filter search");
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(filterFragment, FRAGMENT_TAG); //.commit();
         }
     }
 
@@ -212,19 +215,19 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 //                    .add(filterFragment, FRAGMENT_TAG)
 //                    .commit();
 //        }
-        if (filterFragment != null) { // fragment exists
-            // look up the instance that already exists by tag
-            //filterFragment = (FilterFragment) fm.findFragmentByTag(FRAGMENT_TAG);
-            filterFragment.show(fm, "FilterSearch");
-        }
-        else{
-//            //filterFragment = FilterFragment.newInstance("Filter search");
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(filterFragment, FRAGMENT_TAG)
-                    .commit();
-        }
-
+//        if (filterFragment != null) { // fragment exists
+//            // look up the instance that already exists by tag
+//            filterFragment = (FilterFragment) fm.findFragmentByTag(FRAGMENT_TAG);
+//            filterFragment.show(fm, "FilterSearch");
+//        }
+//        else{
+////            //filterFragment = FilterFragment.newInstance("Filter search");
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(filterFragment, FRAGMENT_TAG)
+//                    .commit();
+//        }
+        filterFragment.show(fm, FRAGMENT_TAG);
 
 
 //            getSupportFragmentManager()
@@ -290,6 +293,9 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                             //todo: make sure images are being retrieved
                             //Toast.makeText(getBaseContext(), "Data could not be retrieved", Toast.LENGTH_SHORT).show();
+                            if(!clearArticleList){
+                                retrieveArticles(params, clearArticleList);
+                            }
                         }
                     }
             );
