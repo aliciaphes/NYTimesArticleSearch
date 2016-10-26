@@ -192,7 +192,7 @@ public class SearchActivity extends AppCompatActivity implements FilterSearchDia
 
             endlessScrollListener.resetState();//reset when a new search
 
-            params = new RequestParams();
+            //params = new RequestParams(); //DO NOT CREATE NEW FILTER PARAMETERS, KEEP USING EXISTING ONES
             params.put("page", 0);
             //params.put("sort", "newest");//let's retrieve the latest articles, we want to stay on top of things
             params.put("q", query);
