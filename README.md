@@ -39,13 +39,18 @@ The following **bonus** features are implemented:
 
 The following **additional** features are implemented:
 
-* [x] Added loading dialog while data is being retrieved
+* [ ] Added loading dialog while data is being retrieved (not ready yet)
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
 <img src='https://github.com/aliciaphes/NYTimesArticleSearch/blob/master/app/walkthrough/walkthrough.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+Infinite scrolling:
+
+<img src='https://github.com/aliciaphes/NYTimesArticleSearch/blob/master/app/walkthrough/infinite_scrolling.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
